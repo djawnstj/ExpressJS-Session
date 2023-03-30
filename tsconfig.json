@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lig": ["ex2015"],
+    "target": "es5",
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "es2015.collection"
+    ]
+  }
+}
