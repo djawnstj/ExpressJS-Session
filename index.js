@@ -1,5 +1,4 @@
 const express = require("express");
-const sessionFactory = require("./session/SessionFactory");
 const cookieParser = require('cookie-parser');
 
 const config = require("./config/config");
@@ -15,9 +14,8 @@ interceptorRegister.addInterceptor(new SessionManagerInterceptor())
     .setOrder(0)
     .addPaths("/*")
 
-config.addInterceptors(interceptorRegister);
+if (config.addInterceptors) config.addInterceptors(interceptorRegister);
 
-// app.use(interceptorRegister.registerInterceptor);
 interceptorRegister.registerInterceptor(app);
 
 app.get("/check", async (req, res) => {

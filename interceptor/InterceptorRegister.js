@@ -30,10 +30,8 @@ class InterceptorRegister {
      * @param { Express } app
      */
     registerInterceptor = (app) => {
-
         this.sortInterceptors();
         app.use(this.#launchInterceptor);
-
     }
 
     /**
@@ -51,8 +49,7 @@ class InterceptorRegister {
 
         next();
 
-        responseCallback.reverse();
-        responseCallback.forEach(fun => res.on("finish", () => fun(req, res)));
+        responseCallback.reverse().forEach(fun => res.on("finish", () => fun(req, res)));
     }
 
 }
