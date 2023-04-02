@@ -23,7 +23,14 @@ class InterceptorRegister {
     }
 
     #sortInterceptors = () => {
-        this.#interceptors.sort((f, s) => f.getOrder() - s.getOrder());
+        const withOrder = this.#interceptors
+            .filter((interceptor) => interceptor.getOrder() !== undefined)
+            .sort((f, s) => f.getOrder() - s.getOrder());
+
+        const withoutOrder = this.#interceptors
+            .filter((interceptor) => interceptor.getOrder() === undefined);
+
+        this.#interceptors = [...withOrder, ...withoutOrder];
     }
 
     /**
