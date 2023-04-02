@@ -25,7 +25,7 @@ class InterceptorRegistryInfo {
     constructor(interceptor) {
         if (!(interceptor instanceof HandlerInterceptor)) throw new Error("must be use HandlerInterceptor");
         this.#interceptor = interceptor;
-        this.#paths = [];
+        this.#paths = ["/*"];
         this.#excludePaths = [];
     }
 

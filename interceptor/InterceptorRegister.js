@@ -22,7 +22,7 @@ class InterceptorRegister {
         return info;
     }
 
-    sortInterceptors = () => {
+    #sortInterceptors = () => {
         this.#interceptors.sort((f, s) => f.getOrder() - s.getOrder());
     }
 
@@ -30,7 +30,7 @@ class InterceptorRegister {
      * @param { Express } app
      */
     registerInterceptor = (app) => {
-        this.sortInterceptors();
+        this.#sortInterceptors();
         app.use(this.#launchInterceptor);
     }
 

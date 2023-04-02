@@ -1,6 +1,6 @@
 const SessionStore = require("./SessionStore");
 const MemorySessionStore = require("./MemorySessionStore");
-const RedisSessionStore = require("./RedisSessionStore");
+const config = require("../config/config");
 
 class SessionFactory {
 
@@ -11,7 +11,7 @@ class SessionFactory {
 
 
     /**
-     * @param { SessionStore } type
+     * @param {SessionStore|{}} [type=MemorySessionStore]
      */
     constructor(type = MemorySessionStore) {
         if (typeof type !== "function") throw new Error("Must use the constructor.");
@@ -39,6 +39,6 @@ class SessionFactory {
 
 }
 
-const sessionFactory = new SessionFactory(RedisSessionStore);
+const sessionFactory = new SessionFactory(config.sessionStore);
 
 module.exports = sessionFactory;

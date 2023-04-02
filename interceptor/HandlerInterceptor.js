@@ -6,7 +6,6 @@ class HandlerInterceptor {
      * @return {boolean}
      */
     preHandle = (req, res) => {
-        throw new Error("preHandle is not implemented");
     }
 
     /**
@@ -15,7 +14,6 @@ class HandlerInterceptor {
      * @return {boolean}
      */
     postHandle = (req, res) => {
-        throw new Error("postHandle is not implemented");
     }
 
 }

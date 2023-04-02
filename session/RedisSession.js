@@ -4,7 +4,7 @@ const RedisSessionStore = require("./RedisSessionStore");
 class RedisSession extends HttpSession {
 
     /**
-     * @type { Map<string, Object> }
+     * @type { Map<string, any> }
      */
     #map
     #id
@@ -20,7 +20,7 @@ class RedisSession extends HttpSession {
 
     /**
      * @param { string } name
-     * @return { Object }
+     * @return { any }
      */
     getAttribute = (name) => {
         return this.#map.get(name);
@@ -28,7 +28,7 @@ class RedisSession extends HttpSession {
 
     /**
      * @param { string } name
-     * @param { Object } attr
+     * @param { any } attr
      * @return { void}
      */
     setAttribute = async (name, attr) => {
@@ -37,10 +37,24 @@ class RedisSession extends HttpSession {
     }
 
     /**
-     * @return { Map<string, Object> }
+     * @return { Map<string, any> }
      */
     getAllAttributes = () => {
-        return [...this.#map];
+        return this.#deepCopyMap(this.#map);
+    }
+
+    /**
+     * @param {Map<string, any>} map
+     * @returns {Map<string, any>}
+     */
+    #deepCopyMap = (map) => {
+        const newMap = new Map();
+        map.forEach((value, key) => {
+            if (value instanceof Map) newMap.set(key, this.#deepCopyMap(value));
+            else if (value instanceof Array) newMap.set(key, [...value]);
+            else newMap.set(key, value);
+        });
+        return newMap;
     }
 
 }

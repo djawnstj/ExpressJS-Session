@@ -6,8 +6,8 @@ class MemorySessionStore extends SessionStore {
 
     #map;
 
-    constructor(props) {
-        super(props);
+    constructor() {
+        super();
         this.#map = new Map();
     }
 
