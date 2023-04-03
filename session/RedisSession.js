@@ -1,5 +1,4 @@
 const HttpSession = require("./HttpSession");
-const RedisSessionStore = require("./RedisSessionStore");
 
 class RedisSession extends HttpSession {
 
@@ -10,7 +9,7 @@ class RedisSession extends HttpSession {
     #id
     #fun
 
-    constructor(id, fun, map) {
+    constructor(id, map, fun) {
         super();
         this.#map = new Map();
         if (id) this.#id = id;
@@ -29,11 +28,11 @@ class RedisSession extends HttpSession {
     /**
      * @param { string } name
      * @param { any } attr
-     * @return { void}
+     * @return {void}
      */
     setAttribute = async (name, attr) => {
         this.#map.set(name, attr);
-        await this.#fun(this.#id, this.#map);
+        if (this.#fun) await this.#fun(this.#id, this.getAllAttributes());
     }
 
     /**

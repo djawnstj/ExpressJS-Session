@@ -53,7 +53,7 @@ class SessionManagerInterceptor extends HandlerInterceptor {
             if (req.cookies) cookieSessionKey = req.cookies[config.sessionKey];
 
             if (cookieSessionKey) await sessionFactory.removeSession(cookieSessionKey);
-            res.clearCookie([config.sessionKey]);
+            res.clearCookie(config.sessionKey);
         }
     }
 

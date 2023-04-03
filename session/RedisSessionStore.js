@@ -1,7 +1,6 @@
 const SessionStore = require("./SessionStore");
 const HttpSession = require("./HttpSession");
 const redis = require("redis");
-const customLogger = require("../util/customLogger");
 const UUID = require("../util/UUID");
 const RedisSession = require("./RedisSession");
 const config = require("../config/config");
@@ -25,11 +24,11 @@ class RedisSessionStore extends SessionStore {
             });
 
             this.#client.on("connect", () => {
-                customLogger.debug("Redis Client Connected!")
+                console.log("Redis Client Connected!")
             });
 
             this.#client.on("error", (err) => {
-                customLogger.error("RedisSessionStore Client Connect Error." + err)
+                console.error("RedisSessionStore Client Connect Error." + err)
             });
 
             this.#client.connect().then();
@@ -44,12 +43,26 @@ class RedisSessionStore extends SessionStore {
     #createSession = async () => {
         const session = new HttpSession();
 
-        const key = UUID.randomUUID();
+        let key = UUID.randomUUID();
+        let isExits = true;
+
+        while (isExits) {
+            isExits = await this.#isExists(key);
+            if (isExits) key = UUID.randomUUID();
+        }
 
         const allAttr = session.getAllAttributes();
         await this.#saveSession(key, allAttr);
 
         return key;
+    }
+
+    /**
+     * @param {string} key
+     * @return {Promise<boolean>}
+     */
+    #isExists = async (key) => {
+        return await this.#client.exists(key);
     }
 
     /**
@@ -62,7 +75,7 @@ class RedisSessionStore extends SessionStore {
 
         await this.#client.multi()
             .set(key, s)
-            .expire(key, 10)
+            .expire(key, config.EXPIRE_TIME)
             .exec();
     }
 
@@ -71,19 +84,19 @@ class RedisSessionStore extends SessionStore {
      * @param { string } key
      * @param { Response } res
      * @param { boolean } status
-     * @returns { Promise }
+     * @returns { Promise<HttpSession> }
      */
     getSession = async (key, res, status) => {
         let obj;
 
         if (key) obj = await this.#client.get(key, (err) => {
-                customLogger.error("RedisSessionStore getAttribute error: " + err)
+                console.error("RedisSessionStore getAttribute error: " + err)
             });
 
         if (!obj && status) {
             key = await this.#createSession();
             obj = await this.#client.get(key, (err) => {
-                customLogger.error("RedisSessionStore getAttribute error: " + err)
+                console.error("RedisSessionStore getAttribute error: " + err)
             });
 
             res.cookie(config.sessionKey, key);
@@ -99,7 +112,7 @@ class RedisSessionStore extends SessionStore {
         obj = JSON.parse(obj);
         const map = new Map(obj.map(([mapKey, mapValue]) => [mapKey, mapValue]));
 
-        return new RedisSession(key, this.#saveSession, map);
+        return new RedisSession(key, map, this.#saveSession);
     }
 
     /**
@@ -107,10 +120,10 @@ class RedisSessionStore extends SessionStore {
      */
     removeSession = (key) => {
         this.#client.del(key, (err) => {
-            customLogger.error("RedisSessionStore removeSession error: " + err)
+            console.error("RedisSessionStore removeSession error: " + err)
         });
     }
 
 }
 
-module.exports = RedisSessionStore
+module.exports = RedisSessionStore;

@@ -6,9 +6,10 @@ class HttpSession {
     #map
     #id
 
-    constructor(id) {
+    constructor(id, map) {
         this.#map = new Map();
         if (id) this.#id = id;
+        if (map) this.#map = map;
     }
 
     /**

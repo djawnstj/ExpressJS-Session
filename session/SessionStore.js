@@ -1,9 +1,4 @@
-const HttpSession = require("./HttpSession");
-
 class SessionStore {
-
-    static sessionKey = "USESSION_ID";
-    static EXPIRE_TIME = 1800;
 
     /**
      * @return { HttpSession }

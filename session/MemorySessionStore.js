@@ -1,6 +1,7 @@
 const SessionStore =  require("./SessionStore");
 const HttpSession =  require("./HttpSession");
 const UUID = require("../util/UUID");
+const config = require("../config/config");
 
 class MemorySessionStore extends SessionStore {
 
@@ -16,10 +17,26 @@ class MemorySessionStore extends SessionStore {
      * @return { string }
      */
     #createSession = () => {
-        const key = UUID.randomUUID();
         const session = new HttpSession();
+
+        let key = UUID.randomUUID();
+        let isExits = true;
+
+        while (isExits) {
+            isExits = this.#isExists(key);
+            if (isExits) key = UUID.randomUUID();
+        }
+
         this.#saveSession(key, session)
         return key;
+    }
+
+    /**
+     * @param {string} key
+     * @return {boolean}
+     */
+    #isExists = (key) => {
+        return this.#map.contains(key)
     }
 
     /**
@@ -46,7 +63,10 @@ class MemorySessionStore extends SessionStore {
             key = this.#createSession();
             session = this.#map.get(key);
 
-            res.cookie(SessionStore.sessionKey, key);
+            res.cookie(config.sessionKey, key);
+        } else if (!session && !status) {
+            res.clearCookie(config.sessionKey);
+            return null;
         }
 
         return session;
