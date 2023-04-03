@@ -15,7 +15,7 @@ class SessionFactory {
      */
     constructor(type = MemorySessionStore) {
         if (typeof type !== "function") throw new Error("Must use the constructor.");
-        const temp = new type();
+        const temp = new type(config.expireTime);
         if (!(temp instanceof SessionStore)) throw new Error("Must use the SessionStore.");
         this.#sessionStore = temp;
     }

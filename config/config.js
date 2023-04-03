@@ -1,4 +1,3 @@
-const InterceptorRegister = require("../interceptor/InterceptorRegister");
 const SecondInterceptor = require("../interceptor/SecondInterceptor");
 const FirstInterceptor = require("../interceptor/FirstInterceptor");
 const ThirdInterceptor = require("../interceptor/ThirdInterceptor");
@@ -21,7 +20,6 @@ module.exports = {
             .addPaths("/*")
             .setOrder(1)
     },
-    sessionKey: "USESSION_ID",
-    EXPIRE_TIME: 1800,
-    // sessionStore: RedisSessionStore,
+    // expireTime: 1800,
+    sessionStore: RedisSessionStore,
 }

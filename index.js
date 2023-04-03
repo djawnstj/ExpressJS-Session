@@ -42,7 +42,7 @@ app.get("/login", async (req, res) => {
     }
 
     let result = "null";
-    if (session) result = await session.getAttribute(id)
+    if (session) result = session.getAttribute("id")
     res.send(result);
 });
 

@@ -3,15 +3,14 @@ const HttpSession = require("./HttpSession");
 const redis = require("redis");
 const UUID = require("../util/UUID");
 const RedisSession = require("./RedisSession");
-const config = require("../config/config");
 
 class RedisSessionStore extends SessionStore {
 
     #client;
     static #instance;
 
-    constructor() {
-        super();
+    constructor(expireTime) {
+        super(expireTime);
 
         if (!RedisSessionStore.#instance) {
             RedisSessionStore.#instance = this;
@@ -28,7 +27,7 @@ class RedisSessionStore extends SessionStore {
             });
 
             this.#client.on("error", (err) => {
-                console.error("RedisSessionStore Client Connect Error." + err)
+                console.error("RedisSessionFactory Client Connect Error." + err)
             });
 
             this.#client.connect().then();
@@ -73,9 +72,11 @@ class RedisSessionStore extends SessionStore {
 
         const s = JSON.stringify([...sessionAttr]);
 
+        console.log(s)
+
         await this.#client.multi()
             .set(key, s)
-            .expire(key, config.EXPIRE_TIME)
+            .expire(key, SessionStore.expireTime)
             .exec();
     }
 
@@ -90,23 +91,23 @@ class RedisSessionStore extends SessionStore {
         let obj;
 
         if (key) obj = await this.#client.get(key, (err) => {
-                console.error("RedisSessionStore getAttribute error: " + err)
+                console.error("RedisSessionFactory getAttribute error: " + err)
             });
 
         if (!obj && status) {
             key = await this.#createSession();
             obj = await this.#client.get(key, (err) => {
-                console.error("RedisSessionStore getAttribute error: " + err)
+                console.error("RedisSessionFactory getAttribute error: " + err)
             });
 
-            res.cookie(config.sessionKey, key);
+            res.cookie(SessionStore.sessionKey, key);
         } else if (!obj && !status) {
-            res.clearCookie(config.sessionKey);
+            res.clearCookie(SessionStore.sessionKey);
             return null;
         }
 
         await this.#client.multi()
-            .expire(key, config.EXPIRE_TIME)
+            .expire(key, SessionStore.expireTime)
             .exec();
 
         obj = JSON.parse(obj);
@@ -120,7 +121,7 @@ class RedisSessionStore extends SessionStore {
      */
     removeSession = (key) => {
         this.#client.del(key, (err) => {
-            console.error("RedisSessionStore removeSession error: " + err)
+            console.error("RedisSessionFactory removeSession error: " + err)
         });
     }
 

@@ -1,14 +1,13 @@
 const SessionStore =  require("./SessionStore");
 const HttpSession =  require("./HttpSession");
 const UUID = require("../util/UUID");
-const config = require("../config/config");
 
 class MemorySessionStore extends SessionStore {
 
     #map;
 
-    constructor() {
-        super();
+    constructor(expireTime) {
+        super(expireTime);
         this.#map = new Map();
     }
 
@@ -63,9 +62,9 @@ class MemorySessionStore extends SessionStore {
             key = this.#createSession();
             session = this.#map.get(key);
 
-            res.cookie(config.sessionKey, key);
+            res.cookie(SessionStore.sessionKey, key);
         } else if (!session && !status) {
-            res.clearCookie(config.sessionKey);
+            res.clearCookie(SessionStore.sessionKey);
             return null;
         }
 

@@ -1,6 +1,6 @@
 const HandlerInterceptor = require("./HandlerInterceptor");
 const sessionFactory = require("../session/SessionFactory");
-const config = require("../config/config");
+const sessionStore = require("../session/sessionStore");
 
 class SessionManagerInterceptor extends HandlerInterceptor {
 
@@ -35,7 +35,7 @@ class SessionManagerInterceptor extends HandlerInterceptor {
         req.getSession = async (status = true) => {
 
             let cookieSessionKey;
-            if (req.cookies) cookieSessionKey = req.cookies[config.sessionKey];
+            if (req.cookies) cookieSessionKey = req.cookies[sessionStore.sessionKey];
 
             return await sessionFactory.getSession(cookieSessionKey, res, status);
         }
@@ -50,10 +50,10 @@ class SessionManagerInterceptor extends HandlerInterceptor {
         req.removeSession = async () => {
 
             let cookieSessionKey;
-            if (req.cookies) cookieSessionKey = req.cookies[config.sessionKey];
+            if (req.cookies) cookieSessionKey = req.cookies[sessionStore.sessionKey];
 
             if (cookieSessionKey) await sessionFactory.removeSession(cookieSessionKey);
-            res.clearCookie(config.sessionKey);
+            res.clearCookie(sessionStore.sessionKey);
         }
     }
 
