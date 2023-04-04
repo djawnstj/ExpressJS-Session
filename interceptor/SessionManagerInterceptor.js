@@ -10,8 +10,8 @@ class SessionManagerInterceptor extends HandlerInterceptor {
      * @return {boolean}
      */
     preHandle = (req, res) => {
-        this.#addGetSessionMethod(req, res);
-        this.#addRemoveSessionMethod(req, res);
+        this.#addSessionGetterMethod(req, res);
+        this.#addSessionRemoveMethod(req, res);
     }
 
     /**
@@ -27,7 +27,7 @@ class SessionManagerInterceptor extends HandlerInterceptor {
      * @param {Request} req
      * @param {Response} res
      */
-    #addGetSessionMethod = (req, res) => {
+    #addSessionGetterMethod = (req, res) => {
         /**
          * @param { boolean } [status=true]
          * @return {HttpSession}
@@ -45,7 +45,7 @@ class SessionManagerInterceptor extends HandlerInterceptor {
      * @param {Request} req
      * @param {Response} res
      */
-    #addRemoveSessionMethod = (req, res) => {
+    #addSessionRemoveMethod = (req, res) => {
 
         req.removeSession = async () => {
 
