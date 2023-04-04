@@ -27,7 +27,17 @@ class SessionFactory {
      * @returns { HttpSession }
      */
     getSession = async (key, res, status) => {
-        return await this.#sessionStore.getSession(key, res, status);
+        const [httpSession, returnKey] = await this.#sessionStore.getSession(key, res, status);
+        if (httpSession) res.cookie(SessionStore.sessionKey, returnKey, {
+            httpOnly: true,
+            maxAge: SessionStore.expireTime * 1000
+        });
+        else {
+            res.clearCookie(SessionStore.sessionKey);
+            await this.#sessionStore.removeSession(returnKey);
+        }
+
+        return httpSession;
     }
 
     /**

@@ -35,7 +35,7 @@ class MemorySessionStore extends SessionStore {
      * @return {boolean}
      */
     #isExists = (key) => {
-        return this.#map.contains(key)
+        return this.#map.has(key)
     }
 
     /**
@@ -50,7 +50,7 @@ class MemorySessionStore extends SessionStore {
      * @param { string } key
      * @param { Response } res
      * @param { boolean } status
-     * @returns { HttpSession }
+     * @returns { any[] }
      */
     getSession = (key, res, status = true) => {
 
@@ -62,13 +62,11 @@ class MemorySessionStore extends SessionStore {
             key = this.#createSession();
             session = this.#map.get(key);
 
-            res.cookie(SessionStore.sessionKey, key);
         } else if (!session && !status) {
-            res.clearCookie(SessionStore.sessionKey);
-            return null;
+            return [null, key];
         }
 
-        return session;
+        return [session, key];
 
     }
 

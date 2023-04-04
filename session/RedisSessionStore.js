@@ -85,7 +85,7 @@ class RedisSessionStore extends SessionStore {
      * @param { string } key
      * @param { Response } res
      * @param { boolean } status
-     * @returns { Promise<HttpSession> }
+     * @returns { Promise<any[]> }
      */
     getSession = async (key, res, status) => {
         let obj;
@@ -99,11 +99,8 @@ class RedisSessionStore extends SessionStore {
             obj = await this.#client.get(key, (err) => {
                 console.error("RedisSessionFactory getAttribute error: " + err)
             });
-
-            res.cookie(SessionStore.sessionKey, key);
         } else if (!obj && !status) {
-            res.clearCookie(SessionStore.sessionKey);
-            return null;
+            return [null, key];
         }
 
         await this.#client.multi()
@@ -113,7 +110,7 @@ class RedisSessionStore extends SessionStore {
         obj = JSON.parse(obj);
         const map = new Map(obj.map(([mapKey, mapValue]) => [mapKey, mapValue]));
 
-        return new RedisSession(key, map, this.#saveSession);
+        return [new RedisSession(key, map, this.#saveSession), key];
     }
 
     /**
