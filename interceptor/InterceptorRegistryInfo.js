@@ -32,13 +32,15 @@ class InterceptorRegistryInfo {
     /**
      * @param {Request} req
      * @param {Response} res
-     * @param {function} next
-     * @return {function}
+     * @param {function[]} resCallbacks
+     * @return {Promise<boolean>}
      */
-    intercept = (req, res, next) => {
-        const b = this.#interceptor.preHandle(req, res);
-        if (b) next();
-        return this.#interceptor.postHandle;
+    intercept = async (req, res, resCallbacks) => {
+        const b = await this.#interceptor.preHandle(req, res);
+
+        console.log("intercept: " + b)
+        resCallbacks.push(this.#interceptor.postHandle)
+        return b;
     }
 
     /**
@@ -77,10 +79,15 @@ class InterceptorRegistryInfo {
 
     /**
      * @param {string} url
-     * @return {boolean}
+     * @return {Promise<boolean>}
      */
-    support = (url) => {
+    support = async (url) => {
         if (url.endsWith("/")) url = url.slice(0, -1);
+
+        const queryStringIndex = url.indexOf('?'); // 쿼리스트링 시작 인덱스 찾기
+
+        // 쿼리스트링이 있는 경우
+        if (queryStringIndex !== -1) url = url.substring(0, queryStringIndex); // 쿼리스트링을 제외한 경로 추출
 
         const first = this.#excludePaths.some(path => path === "/*" || path === url || url + "/*" === path || (path.length < url.length && path.endsWith("/*") && url.startsWith(path.slice(0, -1))));
 

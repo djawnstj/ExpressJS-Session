@@ -3,10 +3,6 @@ class SessionStore {
     static sessionKey = "USESSION_ID";
     static expireTime = 1800;
 
-    constructor(expireTime) {
-        if (expireTime) SessionStore.expireTime = expireTime;
-    }
-
     /**
      * @return { HttpSession }
      */

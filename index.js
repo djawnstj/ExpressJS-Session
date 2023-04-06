@@ -1,24 +1,16 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
 
-const config = require("./config/config");
-const InterceptorRegister = require("./interceptor/InterceptorRegister");
-const SessionManagerInterceptor = require("./interceptor/SessionManagerInterceptor");
+const ConfigLoader = require("./config/ConfigLoader");
 
 const app = express();
 app.use(cookieParser());
 
-const interceptorRegister = new InterceptorRegister();
+const configLoader = new ConfigLoader();
 
-interceptorRegister.addInterceptor(new SessionManagerInterceptor())
-    .setOrder(0)
-    .addPaths("/*")
+configLoader.loadConfig(app);
 
-if (config.addInterceptors) config.addInterceptors(interceptorRegister);
-
-interceptorRegister.registerInterceptor(app);
-
-app.get("/check", async (req, res) => {
+app.get("/smc-darwin-tab/v1/check", async (req, res) => {
     console.log("check call")
     const session = await req.getSession(false);
     let id = "null";
@@ -26,7 +18,7 @@ app.get("/check", async (req, res) => {
     res.send(id);
 });
 
-app.get("/login", async (req, res) => {
+app.get("/smc-darwin-tab/v1/log-in", async (req, res) => {
     console.log("login call")
     const query = req.query;
     const session = await req.getSession();

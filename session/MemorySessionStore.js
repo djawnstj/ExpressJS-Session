@@ -6,8 +6,8 @@ class MemorySessionStore extends SessionStore {
 
     #map;
 
-    constructor(expireTime) {
-        super(expireTime);
+    constructor() {
+        super();
         this.#map = new Map();
     }
 

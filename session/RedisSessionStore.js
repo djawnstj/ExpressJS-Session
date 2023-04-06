@@ -9,8 +9,8 @@ class RedisSessionStore extends SessionStore {
     #client;
     static #instance;
 
-    constructor(expireTime) {
-        super(expireTime);
+    constructor() {
+        super();
 
         if (!RedisSessionStore.#instance) {
             RedisSessionStore.#instance = this;
@@ -80,7 +80,6 @@ class RedisSessionStore extends SessionStore {
             .exec();
     }
 
-
     /**
      * @param { string } key
      * @param { Response } res
@@ -116,8 +115,9 @@ class RedisSessionStore extends SessionStore {
     /**
      * @param { string } key
      */
-    removeSession = (key) => {
-        this.#client.del(key, (err) => {
+    removeSession = async (key) => {
+        const isExists = await this.#isExists(key);
+        if (isExists) this.#client.del(key, (err) => {
             console.error("RedisSessionFactory removeSession error: " + err)
         });
     }

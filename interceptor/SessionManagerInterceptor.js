@@ -1,8 +1,22 @@
 const HandlerInterceptor = require("./HandlerInterceptor");
-const sessionFactory = require("../session/SessionFactory");
-const sessionStore = require("../session/sessionStore");
+const SessionFactory = require("../session/SessionFactory");
+const SessionStore = require("../session/SessionStore");
+
 
 class SessionManagerInterceptor extends HandlerInterceptor {
+
+    /**
+     * @type {SessionFactory}
+     */
+    #sessionFactory;
+
+    /**
+     * @param {SessionStore} store
+     */
+    constructor(store) {
+        super();
+        this.#sessionFactory = new SessionFactory(store);
+    }
 
     /**
      * @param {Request} req
@@ -12,6 +26,7 @@ class SessionManagerInterceptor extends HandlerInterceptor {
     preHandle = (req, res) => {
         this.#addSessionGetterMethod(req, res);
         this.#addSessionRemoveMethod(req, res);
+        return true;
     }
 
     /**
@@ -35,9 +50,9 @@ class SessionManagerInterceptor extends HandlerInterceptor {
         req.getSession = async (status = true) => {
 
             let cookieSessionKey;
-            if (req.cookies) cookieSessionKey = req.cookies[sessionStore.sessionKey];
+            if (req.cookies) cookieSessionKey = req.cookies[SessionStore.sessionKey];
 
-            return await sessionFactory.getSession(cookieSessionKey, res, status);
+            return await this.#sessionFactory.getSession(cookieSessionKey, res, status);
         }
     }
 
@@ -50,10 +65,10 @@ class SessionManagerInterceptor extends HandlerInterceptor {
         req.removeSession = async () => {
 
             let cookieSessionKey;
-            if (req.cookies) cookieSessionKey = req.cookies[sessionStore.sessionKey];
+            if (req.cookies) cookieSessionKey = req.cookies[SessionStore.sessionKey];
 
-            if (cookieSessionKey) await sessionFactory.removeSession(cookieSessionKey);
-            res.clearCookie(sessionStore.sessionKey);
+            if (cookieSessionKey) await this.#sessionFactory.removeSession(cookieSessionKey);
+            res.clearCookie(SessionStore.sessionKey);
         }
     }
 

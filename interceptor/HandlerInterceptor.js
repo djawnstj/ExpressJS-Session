@@ -6,6 +6,7 @@ class HandlerInterceptor {
      * @return {boolean}
      */
     preHandle = (req, res) => {
+        return true;
     }
 
     /**

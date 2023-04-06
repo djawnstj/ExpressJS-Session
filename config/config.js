@@ -1,7 +1,6 @@
-const SecondInterceptor = require("../interceptor/SecondInterceptor");
-const FirstInterceptor = require("../interceptor/FirstInterceptor");
-const ThirdInterceptor = require("../interceptor/ThirdInterceptor");
+const SessionStoreRegister = require("../session/SessionStoreRegister");
 const RedisSessionStore = require("../session/RedisSessionStore");
+const DarwinTSessionInterceptor = require("../interceptor/DarwinTSessionInterceptor");
 
 module.exports = {
 
@@ -20,6 +19,15 @@ module.exports = {
             .addPaths("/*")
             .setOrder(1)
     },
-    // expireTime: 1800,
-    sessionStore: RedisSessionStore,
+
+    /**
+     * @param {SessionStoreRegister} register
+     * @return {SessionStoreRegister}
+     */
+    setSessionStore: (register) => {
+        register.setStore(RedisSessionStore)
+            .setExpireTime(10)
+
+        return register;
+    },
 }

@@ -1,6 +1,6 @@
 const SessionStore = require("./SessionStore");
 const MemorySessionStore = require("./MemorySessionStore");
-const config = require("../config/config");
+const SessionStoreRegister = require("./SessionStoreRegister");
 
 class SessionFactory {
 
@@ -9,15 +9,11 @@ class SessionFactory {
      */
     #sessionStore;
 
-
     /**
-     * @param {SessionStore|{}} [type=MemorySessionStore]
+     * @param {SessionStoreRegister} register
      */
-    constructor(type = MemorySessionStore) {
-        if (typeof type !== "function") throw new Error("Must use the constructor.");
-        const temp = new type(config.expireTime);
-        if (!(temp instanceof SessionStore)) throw new Error("Must use the SessionStore.");
-        this.#sessionStore = temp;
+    constructor(register) {
+        this.#sessionStore = register.getStore();
     }
 
     /**
@@ -34,7 +30,7 @@ class SessionFactory {
         });
         else {
             res.clearCookie(SessionStore.sessionKey);
-            await this.#sessionStore.removeSession(returnKey);
+            if (returnKey) await this.#sessionStore.removeSession(returnKey);
         }
 
         return httpSession;
@@ -49,6 +45,4 @@ class SessionFactory {
 
 }
 
-const sessionFactory = new SessionFactory(config.sessionStore);
-
-module.exports = sessionFactory;
+module.exports = SessionFactory;

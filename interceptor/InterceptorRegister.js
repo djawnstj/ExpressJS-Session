@@ -46,15 +46,21 @@ class InterceptorRegister {
      * @param { Response } res
      * @param { function } next
      */
-    #launchInterceptor = (req, res, next) => {
+    #launchInterceptor = async (req, res, next) => {
         const responseCallback = [];
 
-        this.#interceptors.forEach(interceptorInfo => {
-            const support = interceptorInfo.support(req.url);
-            if (support) responseCallback.push(interceptorInfo.intercept(req, res, next));
-        });
+        let success = true;
+        for (let i = 0; i < this.#interceptors.length; i++) {
+            const interceptorInfo = this.#interceptors[i];
+            console.log("#launchInterceptor called: " + interceptorInfo.constructor.name);
 
-        next();
+            const support = await interceptorInfo.support(req.url);
+            if (support) success = await interceptorInfo.intercept(req, res, responseCallback);
+
+            if (!success) break;
+        }
+
+        if (success) next();
 
         responseCallback.reverse().forEach(fun => res.on("finish", () => fun(req, res)));
     }
