@@ -9,18 +9,16 @@ class RedisSessionStore extends SessionStore {
     #client;
     static #instance;
 
-    constructor() {
+    /**
+     * @param {Object} option
+     */
+    constructor(option) {
         super();
 
         if (!RedisSessionStore.#instance) {
             RedisSessionStore.#instance = this;
 
-            this.#client = redis.createClient({
-                socket: {
-                    port: 6379,
-                    host: "172.23.240.1"
-                }
-            });
+            this.#client = redis.createClient(option);
 
             this.#client.on("connect", () => {
                 console.log("Redis Client Connected!")

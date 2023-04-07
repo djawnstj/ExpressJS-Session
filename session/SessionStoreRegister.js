@@ -8,12 +8,16 @@ class SessionStoreRegister {
      */
     #sessionStore;
 
+    constructor() {
+        this.#sessionStore = new MemorySessionStore();
+    }
+
     /**
      * @param {SessionStore} store
      * @return {SessionStoreRegister}
      */
-    setStore = (store ) => {
-        if (typeof store !== "function") throw new Error("Must use the constructor.");
+    setStore = (store) => {
+        if (!(store instanceof SessionStore)) throw new Error("Must use the SessionStore.");
         this.#sessionStore = store;
 
         return this;
@@ -22,12 +26,7 @@ class SessionStoreRegister {
     /**
      * @return {SessionStore}
      */
-    getStore = () => {
-        if (!this.#sessionStore) this.#sessionStore = MemorySessionStore;
-        const instance = new this.#sessionStore();
-        if (!(instance instanceof SessionStore)) throw new Error("Must use the SessionStore.");
-        return instance;
-    }
+    getStore = () => this.#sessionStore;
 
     /**
      * @param {number} expireTime
