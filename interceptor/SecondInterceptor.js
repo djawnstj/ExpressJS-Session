@@ -9,6 +9,7 @@ class SecondInterceptor extends HandlerInterceptor {
      */
     preHandle = (req, res) => {
         console.log("SecondInterceptor preHandle() called.")
+        return true;
     }
 
     /**

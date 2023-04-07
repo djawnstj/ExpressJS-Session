@@ -9,6 +9,7 @@ class ThirdInterceptor extends HandlerInterceptor {
      */
     preHandle = (req, res) => {
         console.log("ThirdInterceptor preHandle() called.")
+        return true;
     }
 
     /**

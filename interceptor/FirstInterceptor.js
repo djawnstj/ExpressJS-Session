@@ -9,6 +9,7 @@ class FirstInterceptor extends HandlerInterceptor {
      */
     preHandle = (req, res) => {
         console.log("FirstInterceptor preHandle() called.")
+        return true;
     }
 
     /**
