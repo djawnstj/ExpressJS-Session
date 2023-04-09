@@ -38,7 +38,6 @@ class InterceptorRegistryInfo {
     intercept = async (req, res, resCallbacks) => {
         const b = await this.#interceptor.preHandle(req, res);
 
-        console.log("intercept: " + b)
         resCallbacks.push(this.#interceptor.postHandle)
         return b;
     }

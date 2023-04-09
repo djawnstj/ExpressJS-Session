@@ -52,7 +52,6 @@ class InterceptorRegister {
         let success = true;
         for (let i = 0; i < this.#interceptors.length; i++) {
             const interceptorInfo = this.#interceptors[i];
-            console.log("#launchInterceptor called: " + interceptorInfo.constructor.name);
 
             const support = await interceptorInfo.support(req.url);
             if (support) success = await interceptorInfo.intercept(req, res, responseCallback);

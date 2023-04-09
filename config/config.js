@@ -1,5 +1,8 @@
 const SessionStoreRegister = require("../session/SessionStoreRegister");
 const RedisSessionStore = require("../session/RedisSessionStore");
+const SecondInterceptor = require("../interceptor/SecondInterceptor");
+const FirstInterceptor = require("../interceptor/FirstInterceptor");
+const ThirdInterceptor = require("../interceptor/ThirdInterceptor");
 
 module.exports = {
     redis: {
@@ -14,26 +17,26 @@ module.exports = {
     /**
      * @param { InterceptorRegister } register
      */
-    // addInterceptors: (register) => {
-    //     register.addInterceptor(new SecondInterceptor())
-    //         .addPaths("/*")
-    //         .excludePaths("/check")
-    //         .setOrder(1)
-    //     register.addInterceptor(new FirstInterceptor())
-    //         .addPaths("/*")
-    //         // .setOrder(2)
-    //     register.addInterceptor(new ThirdInterceptor())
-    //         .addPaths("/*")
-    //         .setOrder(1)
-    // },
+    addInterceptors: (register) => {
+        register.addInterceptor(new SecondInterceptor())
+            .addPaths("/*")
+            .excludePaths("/check")
+            .setOrder(1)
+        register.addInterceptor(new FirstInterceptor())
+            .addPaths("/*")
+            // .setOrder(2)
+        register.addInterceptor(new ThirdInterceptor())
+            .addPaths("/*")
+            .setOrder(1)
+    },
 
     /**
      * @param {SessionStoreRegister} register
      * @return {SessionStoreRegister}
      */
     setSessionStore: (register) => {
-        register.setStore(new RedisSessionStore(this.redis))
-            .setExpireTime(10)
+        // register.setStore(new RedisSessionStore(this.redis))
+        //     .setExpireTime(10)
 
         return register;
     },
