@@ -10,7 +10,7 @@ const configLoader = new ConfigLoader();
 
 configLoader.loadConfig(app);
 
-app.get("/smc-darwin-tab/v1/check", async (req, res) => {
+app.get("/check", async (req, res) => {
     console.log("check call")
     const session = await req.getSession(false);
     let id = "null";
@@ -18,7 +18,7 @@ app.get("/smc-darwin-tab/v1/check", async (req, res) => {
     res.send(id);
 });
 
-app.get("/smc-darwin-tab/v1/log-in", async (req, res) => {
+app.get("/log-in", async (req, res) => {
     console.log("login call")
     const query = req.query;
     const session = await req.getSession();
@@ -38,7 +38,7 @@ app.get("/smc-darwin-tab/v1/log-in", async (req, res) => {
     res.send(result);
 });
 
-app.get("/logout", async (req, res) => {
+app.get("/log-out", async (req, res) => {
 
     console.log("logout call")
 
